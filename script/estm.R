@@ -1,6 +1,6 @@
 library(tidyverse)
-
-data <- read.csv("data/student_performance.csv")
+library(OEKA201AssignmentARVID)
+data <- data.frame(data)
 
 model1 <- lm(math.score ~ reading.score, data=data)
 summary(model1)
@@ -15,3 +15,5 @@ summary(model3)
 
 model4 <- lm(math.score ~ reading.score + I(reading.score^2), data=data)
 summary(model4)
+
+

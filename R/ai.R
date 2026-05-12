@@ -8,8 +8,8 @@ get_current_time <- ellmer::tool(
   name = "get_current_time",
   description = "Returns the current time.",
   arguments = list(
-    tz = type_string(
-      "Time zone to display the current time in. Defaults to `\"UTC\"`.",
+    tz = ellmer::type_string(
+      "Time zone to display the current time in. Defaults to 'UTC'.",
       required = FALSE
     )
   )
@@ -24,12 +24,12 @@ screenshot_website <- ellmer::tool(
   name = "screenshot_website",
   description = "Take a screenshot of a website.",
   arguments = list(
-    url = type_string("The URL of the website")
+    url = ellmer::type_string("The URL of the website")
   )
 )
 ##############################################################################################################
-### Initialize 
-####  1. The data-variables initializer 
+### Initialize
+####  1. The data-variables initializer
 AIasst <- R6::R6Class("AIasst",
   public = list(
     lmodel = NULL,
@@ -45,8 +45,8 @@ AIasst <- R6::R6Class("AIasst",
   )
 )
 
-#### 2. The method initializer 
-AIasst$set("public", "initialize", 
+#### 2. The method initializer
+AIasst$set("public", "initialize",
 	     function(
           fill=NULL,
 		      fild=NULL,
@@ -59,7 +59,7 @@ AIasst$set("public", "initialize",
           "groq/llama3-8b-8192",
           "google_gemini/gemini-2.5-flash",
           "anthropic/claude-sonnet-4-20250514",
-          "perplexity/sonar")[1], 
+          "perplexity/sonar")[1],
 		      qmd=NULL,
 		      tools=NULL,
 		      refdr="AIrep") {
@@ -72,13 +72,12 @@ AIasst$set("public", "initialize",
   self$filstr[["sses"]] <- sses
   self$filstr[["gses"]] <- gses
   self$filstr[["filr"]] <- paste0(fild,"/",refdr)
-  self$filstr[["filn"]] <- sub("\\..*$", "",paste0(self$filstr[["filr"]],"/",self$filstr[["fils"]]))
   self$tools <- tools
   self$lmodel <- lmodel
   self$chatobj <- ellmer::chat(lmodel,system_prompt=self$filstr$psys)
   # Load
-  if (isTRUE(grepl("\\.(qmd|md|R|Py|bib$)", self$filstr$fill[[1]]))) {
-  #if (isTRUE(grepl("filename\\..*", self$filstr$fill[[1]]))) {
+  if (isTRUE(grepl("\\.(qmd|md|R|Py|py|bib$)", self$filstr$fill[[1]]))) {
+    #paste0(self$filstr$fild,"/",self$filstr$fill[[1]])
     flbt <- readLines(paste0(self$filstr$fild,"/",self$filstr$fill[[1]]))
     self$filstr[["flbt"]] <- flbt
   } else {
@@ -87,16 +86,19 @@ AIasst$set("public", "initialize",
   }
   # Save
   if (isTRUE(init)) {
-     fils <- paste0(self$filstr[["filn"]], c(".qmd", ".rds"))
+     fils <- paste0(self$filstr[["filr"]], c(".qmd", ".rds"))
      exvc <- file.exists(fils)
      if (any(exvc)) {
        file.remove(fils[exvc])
      }
-     if (!dir.exists(self$filstr$filr)) {
-       dir.create(self$filstr$filr)
-     }
+      if (!dir.exists(self$filstr$filr)) {
+        dir.create(self$filstr$filr, recursive = TRUE)
+      }
+      qdir <- file.path(self$filstr$filr, "qmdrds")
+      if (!dir.exists(qdir)) {
+        dir.create(qdir)
+      }
   } else {
-    #browser()
      obj <- paste0(self$filstr[["filn"]], c(".rds"))
      rRDS <- readRDS(obj)
      self$chatobj$set_turns(rRDS)
@@ -122,7 +124,7 @@ AIasst$set("public", "aichat", function(x=NULL,lagq=TRUE,lagt=TRUE,sypr=TRUE) {
   # 2. HENT oppdatert samtalehistorikk
   self$sses <- self$chatobj$get_turns(include_system_prompt = sypr)
   if (isTRUE(lagq)) {
-    filn <- paste0(self$filstr[["filr"]],"/",self$filstr[["fils"]])
+    filn <- paste0(self$filstr[["fild"]],"/",self$filstr[["fils"]])
     write(self$svar, file =filn ,append = !self$filstr[["init"]])
   }
   if (isTRUE(lagt)) {
@@ -136,21 +138,23 @@ AIasst$set("public", "dialog", function() {
 ##############################################################################################################
 ### Function for R& objects
 AIint <- function(
-		  pque=NULL,
-		  fill=NULL,
-		  fild=paste0(rprojroot::find_rstudio_root_file()),
-		  fils=NULL,
-		  psys=NULL,
 		  init=TRUE,
+		  fill=NULL,
+		  psys=NULL,
+		  pque=NULL,
+		  lmod="openai",
+		  fild=paste0(rprojroot::find_rstudio_root_file()),
+      refdr="AIrep",
+		  fils=NULL,
 		  gses=FALSE,
 		  sses=FALSE,
-		  lmod="openai",
-		  tools=NULL,
-      refdr="AIrep"
+		  tools=NULL
 		  )
 		  {
-  bankc <- AIasst$new(fill=fill,fild=fild,fils=fils,psys=psys,init=init,gses=gses,
+
+  bankc <- AIasst$new(init=init,fill=fill,fild=fild,fils=fils,psys=psys,gses=gses,
                       sses=sses,lmod=lmod,tools=tools,refdr=refdr)
+
   #is.null(tools)
   if (!is.null(tools)) {
     bankc$regtool(bankc$tools)
@@ -162,4 +166,3 @@ AIint <- function(
   return(bankc)
 }
 ##############################################################################################################
-
