@@ -5,3 +5,6 @@
 tags
 
 /.quarto/
+.positai
+
+**/*.quarto_ipynb

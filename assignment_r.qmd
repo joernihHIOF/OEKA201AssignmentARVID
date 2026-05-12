@@ -1,0 +1,181 @@
+---
+title: "Assignment ØKA201 Data Analysis"
+author: "Arvid Thapa Strand"
+date: "1 May 2026"
+bibliography: ref.bib
+---
+
+# Abstract
+
+This paper investigates how reading and writing performance are associated with mathematics achievement among students. Using regression analysis in R, several econometric models are estimated and compared, including simple regression, multiple regression, dummy variable analysis, and non-linear specifications. The findings suggest that reading and writing scores are positively related to mathematics performance.
+
+**Keywords:** regression analysis, R programming, student performance, mathematics, Quarto
+
+# Introduction
+
+The purpose of this paper is to analyze factors affecting student performance using regression analysis in R. The analysis focuses on the relationship between reading, writing, and mathematics scores using the Students Performance dataset from Kaggle.
+
+The paper builds upon the previous Gretl assignment and replicates the econometric analysis in R. According to @wickham2017r, R provides flexible tools for statistical computing, data wrangling, and visualization which are useful for empirical economic analysis.
+
+# 1. Research Question
+
+The research question is:
+
+*How are reading and writing scores associated with mathematics performance among students?*
+
+# 2. Data Set
+
+The dataset used in this analysis is the Students Performance dataset from Kaggle. The dataset contains information about gender, parental education, lunch type, test preparation course, and student exam scores in mathematics, reading, and writing.
+
+# 3. Data Description and Summary
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+library(tidyverse)
+data <- read.csv("data/student_performance.csv")
+head(data)
+summary(data)
+```
+
+The dataset contains 1000 observations of student performance. The average mathematics score is approximately 66, while the average reading score is approximately 69.
+
+# 4. Scatterplot Analysis
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+#| label: fig-scatter
+#| fig-cap: "Scatterplot of reading and mathematics scores"
+plot(
+  data$reading.score,
+  data$math.score,
+  main = "Reading Score and Mathematics Score",
+  xlab = "Reading Score",
+  ylab = "Mathematics Score",
+  pch = 19
+)
+```
+
+The scatterplot suggests a positive relationship between reading scores and mathematics scores.
+
+# 5. Simple Regression Model
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+model1 <- lm(math.score ~ reading.score, data=data)
+summary(model1)
+```
+
+The estimated coefficient for reading score is positive and statistically significant at the 5 percent significance level. This indicates that higher reading performance is associated with higher mathematics scores.
+
+# 6. Multiple Regression Model
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+model2 <- lm(math.score ~ reading.score + writing.score, data=data)
+summary(model2)
+```
+
+The multiple regression model includes both reading and writing scores as explanatory variables. Both variables contribute positively to mathematics performance.
+
+# 7. Dummy Variable Analysis
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+data$female <- ifelse(data$gender == "female", 1, 0)
+model3 <- lm(math.score ~ reading.score + female, data=data)
+summary(model3)
+```
+
+The dummy variable captures differences between male and female students. The coefficient for the female variable is statistically significant, indicating systematic differences between groups.
+
+# 8. Non-linear Effects
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+model4 <- lm(math.score ~ reading.score + I(reading.score^2), data=data)
+summary(model4)
+```
+
+The non-linear model includes a quadratic term for reading score. The quadratic term is not strongly significant, suggesting that the relationship is approximately linear.
+
+# 9. Model Comparison
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+#| label: tbl-models
+#| tbl-cap: "Model comparison: R-squared values"
+model_comparison <- data.frame(
+  Model = c("Simple Regression", "Multiple Regression", "Dummy Variable", "Non-linear"),
+  R_squared = c(
+    summary(model1)$r.squared,
+    summary(model2)$r.squared,
+    summary(model3)$r.squared,
+    summary(model4)$r.squared
+  )
+)
+knitr::kable(model_comparison, digits = 4)
+```
+
+The multiple regression model provides the best balance of explanatory power and theoretical relevance.
+
+# Conclusion
+
+The analysis indicates a positive relationship between reading performance and mathematics performance. Reading and writing skills are important predictors of student outcomes in mathematics. The multiple regression model provided the most useful explanation of student mathematics performance in this dataset.
+
+# Word Count
+
+```{r}
+#| echo: true
+#| warning: false
+#| message: false
+word_count <- function(file) {
+  text <- readLines(file)
+  text <- paste(text, collapse = " ")
+  words <- strsplit(text, "\\s+")[[1]]
+  length(words)
+}
+word_count("assignment_r.qmd")
+```
+
+# References
+
+::: {#refs}
+:::
+
+# Appendix: estm.R
+
+```{r}
+#| echo: true
+#| eval: false
+library(tidyverse)
+
+data <- read.csv("data/student_performance.csv")
+
+model1 <- lm(math.score ~ reading.score, data=data)
+summary(model1)
+
+model2 <- lm(math.score ~ reading.score + writing.score, data=data)
+summary(model2)
+
+data$female <- ifelse(data$gender == "female", 1, 0)
+
+model3 <- lm(math.score ~ reading.score + female, data=data)
+summary(model3)
+
+model4 <- lm(math.score ~ reading.score + I(reading.score^2), data=data)
+summary(model4)
+```

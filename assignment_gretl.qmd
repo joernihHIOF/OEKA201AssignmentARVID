@@ -1,0 +1,132 @@
+---
+title: "Assignment ØKA201 Data Analysis"
+author: "Arvid Thapa Strand"
+date: "25 March 2026"
+format:
+  html:
+    toc: true
+---
+
+# Step A
+
+## 1. Research Question
+
+The purpose of this paper is to investigate factors affecting student performance. The research question is:
+
+*How are reading and writing scores associated with mathematics performance among students?*
+
+## 2. Data Set
+
+The dataset used in this analysis is the Students Performance dataset from Kaggle. The dataset contains information about gender, parental education, lunch type, test preparation course, and student exam scores in mathematics, reading, and writing.
+
+# Step B
+
+## 1. Data Description & Summary
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+library(tidyverse)
+
+data <- read.csv("data/student_performance.csv")
+
+head(data)
+
+summary(data)
+```
+
+The dataset contains 1000 observations of student performance. The average mathematics score is approximately 66, while the average reading score is approximately 69.
+
+### Scatterplot of Reading and Mathematics Scores
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+plot(data$reading.score, data$math.score)
+```
+
+The scatterplot suggests a positive relationship between reading scores and mathematics scores.
+
+## 2. Simple Regression Model
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+model1 <- lm(math.score ~ reading.score, data=data)
+
+summary(model1)
+```
+
+The estimated coefficient for reading score is positive and statistically significant at the 5% significance level. This indicates that higher reading performance is associated with higher mathematics scores.
+
+The simple regression model explains a large proportion of the variation in mathematics scores.
+
+## 3. Multiple Regression Model
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+model2 <- lm(math.score ~ reading.score + writing.score, data=data)
+
+summary(model2)
+```
+
+The multiple regression model includes both reading and writing scores as explanatory variables. Both variables contribute positively to mathematics performance.
+
+The multiple regression model provides a better explanation of variation in mathematics scores compared to the simple regression model.
+
+## 4-1. Dummy Variable Analysis
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+data$female <- ifelse(data$gender == "female", 1, 0)
+
+model3 <- lm(math.score ~ reading.score + female, data=data)
+
+summary(model3)
+```
+
+The dummy variable captures differences between male and female students. The coefficient estimates whether female students perform differently in mathematics after controlling for reading performance.
+
+The coefficient for the female variable is statistically significant, indicating systematic differences between groups.
+
+## 4-2. Non-linear Effects
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+
+model4 <- lm(math.score ~ reading.score + I(reading.score^2), data=data)
+
+summary(model4)
+```
+
+The non-linear model includes a quadratic term for reading score in order to test whether the relationship between reading and mathematics performance changes at different score levels.
+
+The quadratic term is not strongly significant, suggesting that the relationship is approximately linear.
+
+## 5. Model Selection and Analysis
+
+The different models were compared based on explanatory power and theoretical relevance. The multiple regression and non-linear models provide improved model fit compared to the simple regression model.
+
+Based on the results, the preferred model is the multiple regression model because it captures more information relevant to mathematics performance.
+
+The preferred model can be used to predict mathematics scores for students with different reading and writing performance levels.
+
+# Conclusion
+
+The analysis indicates a positive relationship between reading performance and mathematics performance. The results suggest that reading and writing skills are important predictors of student outcomes in mathematics.
+
+Overall, the multiple regression model provided the most useful explanation of student mathematics performance in this dataset.

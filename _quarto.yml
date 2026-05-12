@@ -1,0 +1,28 @@
+project:
+  type: website
+
+website:
+  title: "ØKA201 Assignment"
+
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: false
+    css: styles.css
+    mainfont: monospace
+  pdf:
+    toc: true
+    toc-depth: 3
+    number-sections: false
+    lof: true
+    lot: true
+  docx:
+    toc: true
+    toc-depth: 3
+    number-sections: false
+  epub:
+    toc: true
+    toc-depth: 3
+    number-sections: false
+    mainfont: Arial
