@@ -1,13 +1,19 @@
 # OEKA201Assignment
 
 ## Insert name of group members here
-
 - Arvid 222331
 
 ## Confirmation
 ### Part 1
-`<Jørn will write his confirmed message here> `
+JIH, confirmed.
 ### Part 2
-`<Bjørnar/Jørn will write his confirmed message here> `
+JIH, confirmed.
 ### Part 3
-`<Jørn will write his confirmed message here> `
+JIH, confirmed.
+
+**Note:**
+
+* You may need to run **Build + Install** in RStudio for the web page to function properly.
+* An **AI assessment** feature has been added (experimental). You can continue the conversation in `ai_conv.R` if desired.
+
+

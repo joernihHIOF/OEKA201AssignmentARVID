@@ -1,28 +1,48 @@
 project:
   type: website
+  output-dir: docs
+  render:
+    - "index.qmd"
+    - "assignment_gretl.qmd"
+    - "assignment_r.qmd"
+    - "AIrep/qmdrds/conv.qmd"
 
 website:
-  title: "ØKA201 Assignment"
-
+  title: "OEKA201AssignmentKLBRHBAY"
+  navbar:
+    left:
+      - text: Home
+        href: index.qmd
+      - text: Bjørnar's assignment using Gretl
+        href: assignment_gretl.qmd
+      - text: Bjørnar's assignment using R
+        href: assignment_r.qmd
+    right:
+      - text: AI-assesment
+        href: AIrep/qmdrds/conv.qmd
 format:
   html:
     toc: true
     toc-depth: 3
     number-sections: false
-    css: styles.css
     mainfont: monospace
+    css: styles.css
+  docx:
+    toc: true
+    toc-depth: 3
+    number-sections: false
   pdf:
     toc: true
     toc-depth: 3
     number-sections: false
     lof: true
     lot: true
-  docx:
-    toc: true
-    toc-depth: 3
-    number-sections: false
   epub:
     toc: true
     toc-depth: 3
     number-sections: false
     mainfont: Arial
+bibliography: ref.bib
+
+
+
